@@ -18,8 +18,12 @@ public class PaymentGatewayController {
     this.paymentGatewayService = paymentGatewayService;
   }
 
+  // Retrieving a payment’s details
   @GetMapping("/payment/{id}")
   public ResponseEntity<PostPaymentResponse> getPostPaymentEventById(@PathVariable UUID id) {
     return new ResponseEntity<>(paymentGatewayService.getPaymentById(id), HttpStatus.OK);
   }
+
+  // TODO processing a payment, return PostPaymentResponse
+
 }
