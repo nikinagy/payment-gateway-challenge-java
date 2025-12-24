@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 /**
- * Request model for payment processing containing card and payment details.
+ * Request for payment processing containing card and payment details.
  * Card numbers are sent in full for bank validation.
  */
 public class PostPaymentRequest implements Serializable {
