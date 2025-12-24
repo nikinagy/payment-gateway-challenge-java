@@ -25,7 +25,7 @@ public class PaymentValidator {
    *   <li>Amount: must be an integer</li>
    *   <li>CVV: must be 3-4 digits and numeric</li>
    * </ul>
-   * @param request The request to validate
+   * @param request the request to validate
    * @throws ValidationException if any validation rule fails
    */
   public void validate(PostPaymentRequest request) {

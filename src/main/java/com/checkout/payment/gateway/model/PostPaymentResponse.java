@@ -3,6 +3,11 @@ package com.checkout.payment.gateway.model;
 import com.checkout.payment.gateway.enums.PaymentStatus;
 import java.util.UUID;
 
+/**
+ * Response returned after a payment request was sent successfully to the acquiring bank.
+ * Contains the payment identifier, status, and masked card details.
+ * Card numbers are masked to show only the last 4 digits for compliance.
+ */
 public class PostPaymentResponse {
   private UUID id;
   private PaymentStatus status;

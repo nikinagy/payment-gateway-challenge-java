@@ -1,5 +1,6 @@
 package com.checkout.payment.gateway.controller;
 
+import com.checkout.payment.gateway.model.GetPaymentResponse;
 import com.checkout.payment.gateway.model.PostPaymentResponse;
 import com.checkout.payment.gateway.service.PaymentGatewayService;
 import java.util.UUID;
@@ -18,12 +19,8 @@ public class PaymentGatewayController {
     this.paymentGatewayService = paymentGatewayService;
   }
 
-  // Retrieving a payment’s details
   @GetMapping("/payment/{id}")
-  public ResponseEntity<PostPaymentResponse> getPostPaymentEventById(@PathVariable UUID id) {
+  public ResponseEntity<GetPaymentResponse> getPostPaymentEventById(@PathVariable UUID id) {
     return new ResponseEntity<>(paymentGatewayService.getPaymentById(id), HttpStatus.OK);
   }
-
-  // TODO processing a payment, return PostPaymentResponse
-
 }
