@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Contains payment details including card information, amount, and currency.
  * Card numbers are sent in full for bank validation.
  */
-public class GetAcquiringBankRequest {
+public class PostAcquiringBankRequest {
 
   @JsonProperty("card_number")
   private String cardNumber;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Response from the acquiring bank containing authorization result and code.
  */
-public class GetAcquiringBankResponse {
+public class PostAcquiringBankResponse {
 
   private boolean authorized;
   @JsonProperty("authorization_code")
