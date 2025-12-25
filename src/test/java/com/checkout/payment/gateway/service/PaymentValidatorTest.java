@@ -10,9 +10,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.time.YearMonth;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PaymentValidatorTest {
 
@@ -34,9 +33,9 @@ public class PaymentValidatorTest {
   @Test
   @DisplayName("validate() throws ValidationException when request is null")
   void validate_shouldThrowValidationException_whenRequestIsNull() {
-     ValidationException ex =
-         assertThrows(ValidationException.class, () -> validator.validate(null));
-     assertThat(ex.getMessage()).contains("Request cannot be null");
+    assertThatThrownBy(() -> validator.validate(null))
+        .isInstanceOf(ValidationException.class)
+        .hasMessageContaining("Request cannot be null");
   }
 
   @Test
@@ -53,33 +52,27 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when card number is null")
     void validate_shouldThrowValidationException_whenCardNumberIsNull() {
       request.setCardNumber(null);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Card number is missing from the request");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Card number is missing from the request");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when card number is too short")
     void validate_shouldThrowValidationException_whenCardNumberIsTooShort() {
       request.setCardNumber("1234567890123");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Card number");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Card number");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when card number is too long")
     void validate_shouldThrowValidationException_whenCardNumberIsTooLong() {
       request.setCardNumber("123456789012345678901");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Card number");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Card number");
     }
 
     @ParameterizedTest
@@ -87,11 +80,9 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when card number is non-numeric")
     void validate_shouldThrowValidationException_whenCardNumberIsNonNumeric(String cardNumber) {
       request.setCardNumber(cardNumber);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Card number");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Card number");
     }
 
     @Test
@@ -118,22 +109,18 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when expiry month is less than 1")
     void validate_shouldThrowValidationException_whenExpiryMonthIsLessThan1() {
       request.setExpiryMonth(0);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Expiry month");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Expiry month");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when expiry month is greater than 12")
     void validate_shouldThrowValidationException_whenExpiryMonthIsHigherThan12() {
       request.setExpiryMonth(13);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Expiry month");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Expiry month");
     }
 
     @ParameterizedTest
@@ -150,11 +137,9 @@ public class PaymentValidatorTest {
     void validate_shouldThrowValidationException_whenCardIsExpired() {
       request.setExpiryMonth(1);
       request.setExpiryYear(YearMonth.now().minusYears(1).getYear());
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Card has expired");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Card has expired");
     }
 
     @Test
@@ -163,11 +148,9 @@ public class PaymentValidatorTest {
       YearMonth now = YearMonth.now();
       request.setExpiryMonth(now.getMonthValue());
       request.setExpiryYear(now.getYear());
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Card has expired");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Card has expired");
     }
 
     @Test
@@ -188,33 +171,27 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when currency is null")
     void validate_shouldThrowValidationException_whenCurrencyIsNull() {
       request.setCurrency(null);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Currency is missing from the request");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Currency is missing from the request");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when currency is too short")
     void validate_shouldThrowValidationException_whenCurrencyIsTooShort() {
       request.setCurrency("US");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Unsupported currency");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Unsupported currency");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when currency is too long")
     void validate_shouldThrowValidationException_whenCurrencyIsTooLong() {
       request.setCurrency("USDA");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Unsupported currency");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Unsupported currency");
     }
 
     @Test
@@ -222,11 +199,9 @@ public class PaymentValidatorTest {
     void validate_shouldThrowValidationException_whenCurrencyIsUnsupported() {
       // Using hungarian forints
       request.setCurrency("HUF");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Unsupported currency");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Unsupported currency");
     }
 
     @Test
@@ -252,22 +227,18 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when amount is zero")
     void validate_shouldThrowValidationException_whenCAmountIsZero() {
       request.setAmount(0);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Amount");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Amount");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when amount is negative")
     void validate_shouldThrowValidationException_whenCAmountIsNegative() {
       request.setAmount(-100);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("Amount");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("Amount");
     }
 
     @Test
@@ -286,33 +257,27 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when CVV is null")
     void validate_shouldThrowValidationException_whenCVVIsNull() {
       request.setCvv(null);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("CVV is missing from the request");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("CVV is missing from the request");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when CVV is too short")
     void validate_shouldThrowValidationException_whenCVVIsTooShort() {
       request.setCvv("12");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("CVV");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("CVV");
     }
 
     @Test
     @DisplayName("validate() throws ValidationException when CVV is too long")
     void validate_shouldThrowValidationException_whenCVVIsTooLong() {
       request.setCvv("12345");
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("CVV");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("CVV");
     }
 
     @ParameterizedTest
@@ -320,11 +285,9 @@ public class PaymentValidatorTest {
     @DisplayName("validate() throws ValidationException when CVV is non-numeric")
     void validate_shouldThrowValidationException_whenCVVIsNonNumeric(String cvv) {
       request.setCvv(cvv);
-      ValidationException ex = assertThrows(
-          ValidationException.class,
-          () -> validator.validate(request)
-      );
-      assertThat(ex.getMessage()).contains("CVV");
+      assertThatThrownBy(() -> validator.validate(request))
+          .isInstanceOf(ValidationException.class)
+          .hasMessageContaining("CVV");
     }
 
     @ParameterizedTest

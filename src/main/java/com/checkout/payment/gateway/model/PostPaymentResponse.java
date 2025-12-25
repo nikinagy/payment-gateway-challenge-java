@@ -11,12 +11,24 @@ import java.util.UUID;
 public class PostPaymentResponse {
   private UUID id;
   private PaymentStatus status;
-  private int cardNumberLastFour;
+  // Changed to String in case number starts with leading zeros
+  private String cardNumberLastFour;
   private int expiryMonth;
   private int expiryYear;
   private String currency;
   private int amount;
 
+  public PostPaymentResponse() { }
+
+  public PostPaymentResponse(UUID paymentId, PaymentStatus status, PostPaymentRequest request) {
+    this.id = paymentId;
+    this.status = status;
+    this.cardNumberLastFour = request.getCardNumberLastFour();
+    this.expiryMonth = request.getExpiryMonth();
+    this.expiryYear = request.getExpiryYear();
+    this.currency = request.getCurrency();
+    this.amount = request.getAmount();
+  }
 
   public UUID getId() {
     return id;
@@ -34,11 +46,11 @@ public class PostPaymentResponse {
     this.status = status;
   }
 
-  public int getCardNumberLastFour() {
+  public String getCardNumberLastFour() {
     return cardNumberLastFour;
   }
 
-  public void setCardNumberLastFour(int cardNumberLastFour) {
+  public void setCardNumberLastFour(String cardNumberLastFour) {
     this.cardNumberLastFour = cardNumberLastFour;
   }
 

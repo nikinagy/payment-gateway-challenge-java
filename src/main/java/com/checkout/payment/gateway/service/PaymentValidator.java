@@ -28,7 +28,7 @@ public class PaymentValidator {
    * @param request the request to validate
    * @throws ValidationException if any validation rule fails
    */
-  public void validate(PostPaymentRequest request) {
+  public void validate(PostPaymentRequest request) throws ValidationException {
     if (request == null) {
       throw new ValidationException("Request cannot be null");
     }

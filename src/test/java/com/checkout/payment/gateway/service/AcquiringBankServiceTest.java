@@ -17,7 +17,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -69,11 +69,9 @@ public class AcquiringBankServiceTest {
             )
         );
 
-    PaymentProcessingException ex = assertThrows(
-        PaymentProcessingException.class,
-        () -> service.processPayment(paymentRequest)
-    );
-    assertThat(ex.getMessage()).contains("Invalid payment request");
+    assertThatThrownBy(() -> service.processPayment(paymentRequest))
+        .isInstanceOf(PaymentProcessingException.class)
+        .hasMessageContaining("Invalid payment request");
   }
 
   @Test
@@ -90,11 +88,9 @@ public class AcquiringBankServiceTest {
             )
         );
 
-    PaymentProcessingException ex = assertThrows(
-        PaymentProcessingException.class,
-        () -> service.processPayment(paymentRequest)
-    );
-    assertThat(ex.getMessage()).contains("Bank unavailable");
+    assertThatThrownBy(() -> service.processPayment(paymentRequest))
+        .isInstanceOf(PaymentProcessingException.class)
+        .hasMessageContaining("Bank unavailable");
   }
 
   @Test
@@ -103,10 +99,8 @@ public class AcquiringBankServiceTest {
     when(restTemplate.postForObject(anyString(), eq(paymentRequest), eq(PostAcquiringBankResponse.class)))
         .thenThrow(new RestClientException("Connection timeout"));
 
-    PaymentProcessingException ex = assertThrows(
-        PaymentProcessingException.class,
-        () -> service.processPayment(paymentRequest)
-    );
-    assertThat(ex.getMessage()).contains("Bank request failed");
+    assertThatThrownBy(() -> service.processPayment(paymentRequest))
+        .isInstanceOf(PaymentProcessingException.class)
+        .hasMessageContaining("Bank request failed");
   }
 }

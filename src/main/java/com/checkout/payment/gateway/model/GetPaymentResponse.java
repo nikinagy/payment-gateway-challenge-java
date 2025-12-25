@@ -9,13 +9,14 @@ import java.util.UUID;
 public class GetPaymentResponse {
   private UUID id;
   private PaymentStatus status;
-  private int cardNumberLastFour;
+  // Changed to String in case number starts with leading zeros
+  private String cardNumberLastFour;
   private int expiryMonth;
   private int expiryYear;
   private String currency;
   private int amount;
 
-  public GetPaymentResponse(UUID id, PaymentStatus status, int cardNumberLastFour, int expiryMonth,
+  public GetPaymentResponse(UUID id, PaymentStatus status, String cardNumberLastFour, int expiryMonth,
       int expiryYear, String currency, int amount) {
     this.id = id;
     this.status = status;
@@ -59,11 +60,11 @@ public class GetPaymentResponse {
     this.status = status;
   }
 
-  public int getCardNumberLastFour() {
+  public String getCardNumberLastFour() {
     return cardNumberLastFour;
   }
 
-  public void setCardNumberLastFour(int cardNumberLastFour) {
+  public void setCardNumberLastFour(String cardNumberLastFour) {
     this.cardNumberLastFour = cardNumberLastFour;
   }
 

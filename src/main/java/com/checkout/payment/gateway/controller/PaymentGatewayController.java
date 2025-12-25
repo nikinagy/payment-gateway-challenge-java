@@ -23,4 +23,6 @@ public class PaymentGatewayController {
   public ResponseEntity<GetPaymentResponse> getPostPaymentEventById(@PathVariable UUID id) {
     return new ResponseEntity<>(paymentGatewayService.getPaymentById(id), HttpStatus.OK);
   }
+
+  // TODO add POST endpoint for processing payments
 }

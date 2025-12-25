@@ -29,6 +29,13 @@ public class PostPaymentRequest implements Serializable {
     this.cardNumber = cardNumber;
   }
 
+  public String getCardNumberLastFour() {
+    if (cardNumber == null || cardNumber.length() < 4) {
+      return cardNumber;
+    }
+    return cardNumber.substring(cardNumber.length() - 4);
+  }
+
   public int getExpiryMonth() {
     return expiryMonth;
   }
