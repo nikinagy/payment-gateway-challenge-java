@@ -48,7 +48,18 @@ public class PaymentGatewayService {
   }
 
   /**
-   * Processes a payment request, validates it and sends it to acquiring bank.
+   * Processes a payment request by validating it and forwarding it to the acquiring bank.
+   * <p>
+   * To keep the implementation simple and avoid unnecessary complexity, this operation is
+   * performed synchronously.
+   * <p>
+   * No retry logic is implemented. If the bank service is unavailable or returns an error
+   * (e.g. HTTP 503), the payment is marked as {@code REJECTED} and persisted. In such cases,
+   * the merchant is responsible for retrying the entire payment request.
+   * <p>
+   * Idempotency is not supported by this implementation.
+   * </p>
+   *
    * @param paymentRequest the payment request to process
    * @return the payment response
    */
