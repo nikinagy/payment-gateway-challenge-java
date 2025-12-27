@@ -1,6 +1,7 @@
 package com.checkout.payment.gateway.model;
 
 import com.checkout.payment.gateway.enums.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
 /**
@@ -11,9 +12,12 @@ import java.util.UUID;
 public class PostPaymentResponse {
   private UUID id;
   private PaymentStatus status;
+  @JsonProperty("card_number_last_four")
   // Changed to String in case number starts with leading zeros
   private String cardNumberLastFour;
+  @JsonProperty("expiry_month")
   private int expiryMonth;
+  @JsonProperty("expiry_year")
   private int expiryYear;
   private String currency;
   private int amount;

@@ -5,6 +5,7 @@ import com.checkout.payment.gateway.model.PostAcquiringBankResponse;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -15,7 +16,11 @@ import org.springframework.web.client.RestTemplate;
 public class AcquiringBankService {
 
   private static final Logger LOG = LoggerFactory.getLogger(AcquiringBankService.class);
-  private static final String BANK_URL = "http://localhost:8080/payments";
+  private static final String PAYMENTS_API_PATH = "/payments";
+
+  @Value("${acquiring.bank.url:http://localhost:8080}")
+  private String bankUrl;
+
   private final RestTemplate restTemplate;
 
   public AcquiringBankService(RestTemplate restTemplate) {
@@ -33,7 +38,7 @@ public class AcquiringBankService {
     LOG.debug("Processing payment through Acquiring Bank.");
     try {
       PostAcquiringBankResponse response = restTemplate.postForObject(
-          BANK_URL,
+          bankUrl + PAYMENTS_API_PATH,
           bankRequest,
           PostAcquiringBankResponse.class
       );
