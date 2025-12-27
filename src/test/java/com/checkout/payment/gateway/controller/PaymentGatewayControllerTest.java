@@ -85,7 +85,7 @@ class PaymentGatewayControllerTest {
 
     paymentsRepository.add(payment);
 
-    mvc.perform(MockMvcRequestBuilders.get("/payment/" + payment.getId()))
+    mvc.perform(MockMvcRequestBuilders.get("/payments/" + payment.getId()))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value(payment.getStatus().getName()))
         .andExpect(jsonPath("$.cardNumberLastFour").value(payment.getCardNumberLastFour()))
@@ -97,7 +97,7 @@ class PaymentGatewayControllerTest {
 
   @Test
   void whenPaymentWithIdDoesNotExistThen404IsReturned() throws Exception {
-    mvc.perform(MockMvcRequestBuilders.get("/payment/" + UUID.randomUUID()))
+    mvc.perform(MockMvcRequestBuilders.get("/payments/" + UUID.randomUUID()))
         .andExpect(status().isNotFound())
         .andExpect(jsonPath("$.message").value("Page not found"));
   }
@@ -116,7 +116,7 @@ class PaymentGatewayControllerTest {
       }
       """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -142,7 +142,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -163,7 +163,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -184,7 +184,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -205,7 +205,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -226,7 +226,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -246,7 +246,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -266,7 +266,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -287,7 +287,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -308,7 +308,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -329,7 +329,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -350,7 +350,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
@@ -371,7 +371,7 @@ class PaymentGatewayControllerTest {
     }
     """;
 
-    mvc.perform(MockMvcRequestBuilders.post("/payment")
+    mvc.perform(MockMvcRequestBuilders.post("/payments")
             .contentType("application/json")
             .content(requestBody))
         .andExpect(status().isOk())
