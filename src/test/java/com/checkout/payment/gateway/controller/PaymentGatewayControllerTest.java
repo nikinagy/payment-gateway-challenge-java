@@ -10,8 +10,6 @@ import com.checkout.payment.gateway.repository.PaymentsRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
 /**
@@ -29,6 +29,7 @@ import org.testcontainers.utility.MountableFile;
  * I kept them as integration tests because they verify real Spring wiring and application
  * behavior, which seems aligned with the existing test intent.
  */
+@Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
 class PaymentGatewayControllerTest {
@@ -38,31 +39,21 @@ class PaymentGatewayControllerTest {
   @Autowired
   PaymentsRepository paymentsRepository;
 
-  static GenericContainer<?> bankSimulator;
-
-  // Start the testcontainer with the bank simulator imposters before all tests
-  @BeforeAll
-  static void startContainer() {
-    bankSimulator = new GenericContainer<>("bbyars/mountebank:2.8.1")
-        .withExposedPorts(2525, 8080)
-        .withCommand(
-            "--configfile", "/var/imposters/bank_simulator.ejs", "--allowInjection"
-        )
-        .withCopyFileToContainer(
-            MountableFile.forHostPath("imposters/bank_simulator.ejs"),
-            "/var/imposters/bank_simulator.ejs"
-        )
-        .waitingFor(Wait.forListeningPort().withStartupTimeout(java.time.Duration.ofSeconds(60)))
-        .waitingFor(Wait.forListeningPort().forPorts(2525, 8080));
-    bankSimulator.start();
-  }
-
-  @AfterAll
-  static void stopContainer() {
-    if (bankSimulator != null) {
-      bankSimulator.stop();
-    }
-  }
+  // Lifecycle will be handled by the @Testcontainers and @Container annotations
+  // to start the container before all tests and stop it after all tests.
+  // However, IntelliJ IDEA does not recognize this
+  @SuppressWarnings("resource")
+  @Container
+  static GenericContainer<?> bankSimulator = new GenericContainer<>("bbyars/mountebank:2.8.1")
+      .withExposedPorts(2525, 8080)
+      .withCommand(
+          "--configfile", "/var/imposters/bank_simulator.ejs", "--allowInjection"
+      )
+      .withCopyFileToContainer(
+          MountableFile.forHostPath("imposters/bank_simulator.ejs"),
+          "/var/imposters/bank_simulator.ejs"
+      )
+      .waitingFor(Wait.forListeningPort().forPorts(2525, 8080));
 
   @DynamicPropertySource
   static void properties(DynamicPropertyRegistry registry) {
