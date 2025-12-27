@@ -126,6 +126,7 @@ Idempotency key should be provided by the client and stored with the payment rec
 - Use a database for storing payment records instead of in-memory storage to ensure data persistence.
 - Reason of rejected, declined payments should be stored for auditing and troubleshooting purposes.
 - Authentication and authorization should be implemented to secure the API endpoints.
+- Rate limiting should be added to prevent abuse of the payment API.
 - Card number should be stored securely using encryption or tokenization to comply with PCI DSS standards.
 - Add tests for observability.
 - Resiliency testing should be performed to ensure the system can handle failures.
