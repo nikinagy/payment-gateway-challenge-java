@@ -29,7 +29,11 @@ public class AcquiringBankService {
 
   /**
    * Processes a payment request through the Acquiring Bank.
-   *
+   * <p>
+   * In production code, we should be implementing exponential backoff with jitter
+   * and a circuit breaker (e.g., using Resilience4j) for transient failures (5xx HTTP responses
+   * and network issues).
+   * </p>
    * @param bankRequest the payment request
    * @return the bank response
    * @throws PaymentProcessingException if the bank request fails
@@ -51,8 +55,6 @@ public class AcquiringBankService {
       LOG.error("Acquiring Bank service is unavailable: {}", e.getResponseBodyAsString());
       throw new PaymentProcessingException("Acquiring Bank unavailable", e);
     } catch (RestClientException e) {
-      // In production code, we should be implementing exponential backoff with jitter
-      // and a circuit breaker (e.g., using Resilience4j) for transient failures
       LOG.error("Error processing payment with Acquiring Bank: {}", e.getMessage());
       throw new PaymentProcessingException("Bank request failed", e);
     }
