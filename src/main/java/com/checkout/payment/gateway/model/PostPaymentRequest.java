@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class PostPaymentRequest implements Serializable {
 
   // Changed cardNumberLastFour int to cardNumber String to accept full card number for bank validation
+  // but tokenized number should be stored securely in real applications.
   @JsonProperty("card_number")
   private String cardNumber;
   @JsonProperty("expiry_month")
@@ -18,7 +19,7 @@ public class PostPaymentRequest implements Serializable {
   private int expiryYear;
   private String currency;
   private int amount;
-  // Changed cvv int to String for easy validation
+  // Changed cvv int to String for easy validation and to preserve leading zeros
   private String cvv;
 
   public String getCardNumber() {
