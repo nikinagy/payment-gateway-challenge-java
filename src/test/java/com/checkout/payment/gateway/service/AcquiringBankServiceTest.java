@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -25,7 +26,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class AcquiringBankServiceTest {
 
-  private static final String BANK_URL = "http://localhost:8080/payments";
+  private static final String BANK_URL = "http://localhost:8080";
+  private static final String PAYMENTS_API = "/payments";
 
   @Mock
   private RestTemplate restTemplate;
@@ -36,7 +38,7 @@ public class AcquiringBankServiceTest {
 
   @BeforeEach
   void setUp() {
-    service = new AcquiringBankService(restTemplate);
+    service = new AcquiringBankService(restTemplate, BANK_URL);
     paymentRequest = new PostPaymentRequest();
     bankResponse = new PostAcquiringBankResponse();
   }
@@ -46,7 +48,7 @@ public class AcquiringBankServiceTest {
   void processPayment_Succeeds() {
     bankResponse.setAuthorized(true);
     bankResponse.setAuthorizationCode("AUTH123");
-    when(restTemplate.postForObject(BANK_URL, paymentRequest, PostAcquiringBankResponse.class))
+    when(restTemplate.postForObject(BANK_URL + PAYMENTS_API, paymentRequest, PostAcquiringBankResponse.class))
         .thenReturn(bankResponse);
 
     PostAcquiringBankResponse result = service.processPayment(paymentRequest);

@@ -18,13 +18,13 @@ public class AcquiringBankService {
   private static final Logger LOG = LoggerFactory.getLogger(AcquiringBankService.class);
   private static final String PAYMENTS_API_PATH = "/payments";
 
-  @Value("${acquiring.bank.url:http://localhost:8080}")
-  private String bankUrl;
+  private final String bankUrl;
 
   private final RestTemplate restTemplate;
 
-  public AcquiringBankService(RestTemplate restTemplate) {
+  public AcquiringBankService(RestTemplate restTemplate, @Value("${acquiring.bank.url}") String bankUrl) {
     this.restTemplate = restTemplate;
+    this.bankUrl = bankUrl;
   }
 
   /**
