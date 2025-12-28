@@ -130,3 +130,4 @@ Idempotency key should be provided by the client and stored with the payment rec
 - Card number should be stored securely using encryption or tokenization to comply with PCI DSS standards.
 - Add tests for observability.
 - Resiliency testing should be performed to ensure the system can handle failures.
+- Load testing should be conducted to validate performance under high traffic conditions.
