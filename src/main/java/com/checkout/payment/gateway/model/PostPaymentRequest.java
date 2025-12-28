@@ -3,24 +3,38 @@ package com.checkout.payment.gateway.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
+/**
+ * Request for payment processing containing card and payment details.
+ * Card numbers are sent in full for bank validation.
+ */
 public class PostPaymentRequest implements Serializable {
 
-  @JsonProperty("card_number_last_four")
-  private int cardNumberLastFour;
+  // Changed cardNumberLastFour int to cardNumber String to accept full card number for bank validation
+  // but tokenized number should be stored securely in real applications.
+  @JsonProperty("card_number")
+  private String cardNumber;
   @JsonProperty("expiry_month")
   private int expiryMonth;
   @JsonProperty("expiry_year")
   private int expiryYear;
   private String currency;
   private int amount;
-  private int cvv;
+  // Changed cvv int to String for easy validation and to preserve leading zeros
+  private String cvv;
 
-  public int getCardNumberLastFour() {
-    return cardNumberLastFour;
+  public String getCardNumber() {
+    return cardNumber;
   }
 
-  public void setCardNumberLastFour(int cardNumberLastFour) {
-    this.cardNumberLastFour = cardNumberLastFour;
+  public void setCardNumber(String cardNumber) {
+    this.cardNumber = cardNumber;
+  }
+
+  public String getCardNumberLastFour() {
+    if (cardNumber == null || cardNumber.length() < 4) {
+      return cardNumber;
+    }
+    return cardNumber.substring(cardNumber.length() - 4);
   }
 
   public int getExpiryMonth() {
@@ -55,11 +69,11 @@ public class PostPaymentRequest implements Serializable {
     this.amount = amount;
   }
 
-  public int getCvv() {
+  public String getCvv() {
     return cvv;
   }
 
-  public void setCvv(int cvv) {
+  public void setCvv(String cvv) {
     this.cvv = cvv;
   }
 
@@ -71,7 +85,7 @@ public class PostPaymentRequest implements Serializable {
   @Override
   public String toString() {
     return "PostPaymentRequest{" +
-        "cardNumberLastFour=" + cardNumberLastFour +
+        "cardNumber=" + cardNumber +
         ", expiryMonth=" + expiryMonth +
         ", expiryYear=" + expiryYear +
         ", currency='" + currency + '\'' +

@@ -3,14 +3,46 @@ package com.checkout.payment.gateway.model;
 import com.checkout.payment.gateway.enums.PaymentStatus;
 import java.util.UUID;
 
+/**
+ * Response returned when retrieving payment details.
+ */
 public class GetPaymentResponse {
   private UUID id;
   private PaymentStatus status;
-  private int cardNumberLastFour;
+  // Changed to String in case number starts with leading zeros
+  private String cardNumberLastFour;
   private int expiryMonth;
   private int expiryYear;
   private String currency;
   private int amount;
+
+  public GetPaymentResponse(UUID id, PaymentStatus status, String cardNumberLastFour, int expiryMonth,
+      int expiryYear, String currency, int amount) {
+    this.id = id;
+    this.status = status;
+    this.cardNumberLastFour = cardNumberLastFour;
+    this.expiryMonth = expiryMonth;
+    this.expiryYear = expiryYear;
+    this.currency = currency;
+    this.amount = amount;
+  }
+
+  /**
+   * Convert from PostPaymentResponse to GetPaymentResponse when retrieving payment details.
+   * @param stored the stored PostPaymentResponse in the repository
+   * @return the corresponding GetPaymentResponse
+   */
+  public static GetPaymentResponse from(PostPaymentResponse stored) {
+    return new GetPaymentResponse(
+        stored.getId(),
+        stored.getStatus(),
+        stored.getCardNumberLastFour(),
+        stored.getExpiryMonth(),
+        stored.getExpiryYear(),
+        stored.getCurrency(),
+        stored.getAmount()
+    );
+  }
 
   public UUID getId() {
     return id;
@@ -28,11 +60,11 @@ public class GetPaymentResponse {
     this.status = status;
   }
 
-  public int getCardNumberLastFour() {
+  public String getCardNumberLastFour() {
     return cardNumberLastFour;
   }
 
-  public void setCardNumberLastFour(int cardNumberLastFour) {
+  public void setCardNumberLastFour(String cardNumberLastFour) {
     this.cardNumberLastFour = cardNumberLastFour;
   }
 

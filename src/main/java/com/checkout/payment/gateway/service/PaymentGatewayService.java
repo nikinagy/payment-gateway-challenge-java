@@ -1,6 +1,10 @@
 package com.checkout.payment.gateway.service;
 
+import com.checkout.payment.gateway.enums.PaymentStatus;
 import com.checkout.payment.gateway.exception.EventProcessingException;
+import com.checkout.payment.gateway.exception.PaymentProcessingException;
+import com.checkout.payment.gateway.exception.ValidationException;
+import com.checkout.payment.gateway.model.GetPaymentResponse;
 import com.checkout.payment.gateway.model.PostPaymentRequest;
 import com.checkout.payment.gateway.model.PostPaymentResponse;
 import com.checkout.payment.gateway.repository.PaymentsRepository;
@@ -15,17 +19,88 @@ public class PaymentGatewayService {
   private static final Logger LOG = LoggerFactory.getLogger(PaymentGatewayService.class);
 
   private final PaymentsRepository paymentsRepository;
+  private final PaymentValidator paymentValidator;
+  private final AcquiringBankService acquiringBankService;
 
-  public PaymentGatewayService(PaymentsRepository paymentsRepository) {
+  public PaymentGatewayService(
+      PaymentsRepository paymentsRepository,
+      PaymentValidator paymentValidator,
+      AcquiringBankService acquiringBankService
+  ) {
     this.paymentsRepository = paymentsRepository;
+    this.paymentValidator = paymentValidator;
+    this.acquiringBankService = acquiringBankService;
   }
 
-  public PostPaymentResponse getPaymentById(UUID id) {
-    LOG.debug("Requesting access to to payment with ID {}", id);
-    return paymentsRepository.get(id).orElseThrow(() -> new EventProcessingException("Invalid ID"));
+  /**
+   * Retrieves a payment by its unique identifier.
+   * @param id The payment id which will be used to retrieve the payment details
+   * @return the payment response
+   * @throws EventProcessingException if payment not found
+   */
+  public GetPaymentResponse getPaymentById(UUID id) {
+    LOG.debug("Requesting access to payment with ID {}", id);
+    // Reusing PostPaymentResponse as a simple in-memory storage model
+    // as per the provided test repository
+    PostPaymentResponse stored = paymentsRepository.get(id)
+        .orElseThrow(() -> new EventProcessingException("Invalid ID"));
+    return GetPaymentResponse.from(stored);
   }
 
-  public UUID processPayment(PostPaymentRequest paymentRequest) {
-    return UUID.randomUUID();
+  /**
+   * Processes a payment request by validating it and forwarding it to the acquiring bank.
+   * <p>
+   * To keep the implementation simple and avoid unnecessary complexity, this operation is
+   * performed synchronously.
+   * <p>
+   * No retry logic is implemented. If the bank service is unavailable or returns an error
+   * (e.g. HTTP 503), the payment is marked as {@code REJECTED} and persisted. In such cases,
+   * the merchant is responsible for retrying the entire payment request.
+   * <p>
+   * Idempotency is not supported by this implementation.
+   * </p>
+   *
+   * @param paymentRequest the payment request to process
+   * @return the payment response
+   */
+  public PostPaymentResponse processPayment(PostPaymentRequest paymentRequest) {
+    UUID paymentId = UUID.randomUUID();
+    LOG.debug("Processing payment with ID {}", paymentId);
+
+    // Validating the request
+    try {
+      paymentValidator.validate(paymentRequest);
+    } catch (ValidationException e) {
+      LOG.warn("Payment validation failed: {}", e.getMessage());
+      // Storing the rejected payment due to validation failure
+      return createAndPersistResponse(paymentId, PaymentStatus.REJECTED, paymentRequest);
+    }
+
+    try {
+      // Sending payment to acquiring bank
+      var bankResponse = acquiringBankService.processPayment(paymentRequest);
+      var response = createAndPersistResponse(
+          paymentId,
+          bankResponse.isAuthorized() ? PaymentStatus.AUTHORIZED : PaymentStatus.DECLINED,
+          paymentRequest
+      );
+      LOG.debug("Payment with ID {} processed successfully with status {}", paymentId, response.getStatus());
+      return response;
+    } catch (PaymentProcessingException e) {
+      LOG.warn("Acquiring bank processing failed: {}", e.getMessage());
+      // Storing the rejected payment due to bank failure
+      return createAndPersistResponse(paymentId, PaymentStatus.REJECTED, paymentRequest);
+    }
+  }
+
+  private PostPaymentResponse createAndPersistResponse(
+      UUID paymentId,
+      PaymentStatus status,
+      PostPaymentRequest paymentRequest
+  ) {
+    var response = new PostPaymentResponse(paymentId, status, paymentRequest);
+    paymentsRepository.add(response);
+    LOG.debug("Payment {} persisted with status {}", paymentId, status);
+    return response;
   }
 }

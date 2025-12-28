@@ -1,17 +1,38 @@
 package com.checkout.payment.gateway.model;
 
 import com.checkout.payment.gateway.enums.PaymentStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
+/**
+ * Response returned after a payment request was sent successfully to the acquiring bank.
+ * Contains the payment identifier, status, and masked card details.
+ * Card numbers are masked to show only the last 4 digits for compliance.
+ */
 public class PostPaymentResponse {
   private UUID id;
   private PaymentStatus status;
-  private int cardNumberLastFour;
+  @JsonProperty("card_number_last_four")
+  // Changed to String in case number starts with leading zeros
+  private String cardNumberLastFour;
+  @JsonProperty("expiry_month")
   private int expiryMonth;
+  @JsonProperty("expiry_year")
   private int expiryYear;
   private String currency;
   private int amount;
 
+  public PostPaymentResponse() { }
+
+  public PostPaymentResponse(UUID paymentId, PaymentStatus status, PostPaymentRequest request) {
+    this.id = paymentId;
+    this.status = status;
+    this.cardNumberLastFour = request.getCardNumberLastFour();
+    this.expiryMonth = request.getExpiryMonth();
+    this.expiryYear = request.getExpiryYear();
+    this.currency = request.getCurrency();
+    this.amount = request.getAmount();
+  }
 
   public UUID getId() {
     return id;
@@ -29,11 +50,11 @@ public class PostPaymentResponse {
     this.status = status;
   }
 
-  public int getCardNumberLastFour() {
+  public String getCardNumberLastFour() {
     return cardNumberLastFour;
   }
 
-  public void setCardNumberLastFour(int cardNumberLastFour) {
+  public void setCardNumberLastFour(String cardNumberLastFour) {
     this.cardNumberLastFour = cardNumberLastFour;
   }
 
